@@ -5,7 +5,6 @@ import android.animation.Animator;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.database.Cursor;
 import android.net.ConnectivityManager;
 import android.net.NetworkCapabilities;
 import android.net.NetworkInfo;
@@ -13,20 +12,15 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.AppCompatTextView;
-import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.core.view.WindowCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.core.view.WindowInsetsControllerCompat;
@@ -34,10 +28,7 @@ import androidx.core.view.WindowInsetsControllerCompat;
 import com.airbnb.lottie.LottieAnimationView;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
-import com.google.android.gms.auth.api.signin.GoogleSignInClient;
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.material.snackbar.Snackbar;
-import com.google.firebase.FirebaseApp;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -55,8 +46,6 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 public class SplashScreen extends AppCompatActivity {
 
@@ -95,7 +84,7 @@ public class SplashScreen extends AppCompatActivity {
     public static String userLoggedIAs = "not set";
     public static String authProviderName = "";
     public static String userEmail = "";
-
+    FirebaseUser firebaseUser;
     private FirebaseAnalytics mFirebaseAnalytics;
 
     @Override
@@ -136,7 +125,7 @@ public class SplashScreen extends AppCompatActivity {
                 animationCompleted = true;
 
                 if (!activityChanged) {
-                    activityChanged=true;
+                    activityChanged = true;
                     handler_forIntent();
                 }
 
@@ -319,9 +308,7 @@ public class SplashScreen extends AppCompatActivity {
             createSnackBar();
             return;
         }
-        Log.d(TAG, "userLoggedIn: " + userLoggedIn);
-        Log.d(TAG, "userLoggedIAs: " + userLoggedIAs);
-        if (SplashScreen.userLoggedIn) {
+        if (SplashScreen.userLoggedIn && firebaseUser != null) {
             Intent intent = new Intent(getApplicationContext(), MainActivity.class);
             startActivity(intent);
         } else {
@@ -458,19 +445,11 @@ public class SplashScreen extends AppCompatActivity {
 
     protected void onStart() {
         super.onStart();
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        if (user != null) {
-            authProviderName = user.getProviderData().get(user.getProviderData().size() - 1).getProviderId();
-            Log.d(TAG, "AuthProvider: " + authProviderName);
+        firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+        if (firebaseUser != null) {
+            authProviderName = firebaseUser.getProviderData().get(firebaseUser.getProviderData().size() - 1).getProviderId();
             userLoggedIn = true;
-
         }
-
-        GoogleSignInAccount acct = GoogleSignIn.getLastSignedInAccount(this);
-        Log.d(TAG, "FirebaseUser: " + user);
-        Log.d(TAG, "GoogleSignInAccount: " + acct);
-
     }
-
 
 }
