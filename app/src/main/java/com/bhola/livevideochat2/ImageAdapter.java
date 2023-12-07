@@ -12,8 +12,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.List;
 
 public class ImageAdapter extends RecyclerView.Adapter<ImageViewHolder> {
-    private Context context;
-    private List<Integer> imageList;
+    private final Context context;
+    private final List<Integer> imageList;
 
     public ImageAdapter(Context context, List<Integer> imageList) {
         this.context = context;
